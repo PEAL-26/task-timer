@@ -1,8 +1,8 @@
-# Tarefas cronometradas
+# Task Timer
 
 ## Funcionalidades
 
-- Agendar tarafas
+- Agendar tarefas
 - Iniciar, Pausar e Concluir Tarefa
 - Repetir tarefa a cada (dia, semana, mês, ano), personalizado: ex.: todas 2ª Feiras
 - Gerar um relatório de quanto tempo levou para concluir a tarefa
