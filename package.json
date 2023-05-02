@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "TaskTimer é um projeto open source que visa fornecer uma plataforma de gerenciamento de tarefas com funcionalidade de cronômetro e alarme",
   "homepage": "https://github.com/PEAL-26/task-timer#readme",
-  "main": "src/index.js",
-  "module": "src/main.js",
+  "main": "src/index.ts",
+  "module": "src/main.ts",
   "scripts": {
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
