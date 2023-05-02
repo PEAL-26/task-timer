@@ -1,5 +1,12 @@
 # TaskTimer | SEGURANÇA
 
+## Navegação
+
+- [Tarefas](TODO.md)
+- [Readme](README.md)
+- [Modelagem](MODELING.md)
+- [Desempenho](PERFORMANCE.md)
+
 ## Lista de verificação: recomendações
 
 Etapas seguidas para melhorar a segurança do aplicativo:

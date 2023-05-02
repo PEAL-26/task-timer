@@ -1,5 +1,12 @@
 # TaskTimer | DESEMPENHO
 
+## Navegação
+
+- [Tarefas](TODO.md)
+- [Readme](README.md)
+- [Modelagem](MODELING.md)
+- [Segurança](SECURITY.md)
+
 ## Lista de verificação: recomendações
 
 Etapas seguidas para tornar o aplicativo mais simples, rápido e com menos recursos:

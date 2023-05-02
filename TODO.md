@@ -1,7 +1,14 @@
 # TaskTimer | TODO
 
+## Navegação
+
+- [Readme](README.md)
+- [Modelagem](MODELING.md)
+- [Desempenho](PERFORMANCE.md)
+- [Segurança](SECURITY.md)
+
 Funcionalidades a serem desenvolvidas neste projecto
- 
+
 - [ ] Gerenciamento de tarefas
 
   - [ ] adicionar

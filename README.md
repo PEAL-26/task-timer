@@ -2,6 +2,13 @@
 
 TaskTimer é um projeto open source que visa fornecer uma plataforma de gerenciamento de tarefas com funcionalidade de cronômetro e alarme. Ele foi criado para ajudar pessoas e equipes a gerenciar melhor o tempo gasto em cada tarefa e atingir seus objetivos de maneira mais eficiente.
 
+## Navegação
+
+- [Tarefas](TODO.md)
+- [Modelagem](MODELING.md)
+- [Desempenho](PERFORMANCE.md)
+- [Segurança](SECURITY.md)
+
 ## Funcionalidades
 
 O TaskTimer possui as seguintes funcionalidades principais:

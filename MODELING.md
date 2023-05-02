@@ -1,5 +1,12 @@
 # TaskTimer | Modelagem
 
+## Navegação
+
+- [Tarefas](TODO.md)
+- [Readme](README.md)
+- [Desempenho](PERFORMANCE.md)
+- [Segurança](SECURITY.md)
+
 tarefas {
 	id
 	tarefa_principal_id
