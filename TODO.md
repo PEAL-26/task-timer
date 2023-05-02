@@ -1,6 +1,8 @@
 # TaskTimer | TODO
 
-- [] Gerenciamento de tarefas
+Funcionalidades a serem desenvolvidas neste projecto
+ 
+- [ ] Gerenciamento de tarefas
 
   - [ ] adicionar
   - [ ] editar
@@ -9,7 +11,7 @@
   - [ ] pausar
   - [ ] concluir
   - [ ] definir repetição das tarefa (dia, semana, mês, ano)
-    - [ ] personalizado: ex.: todas 2ª Feiras
+    - personalizado: ex.: todas 2ª Feiras
 
 - [ ] Cronômetro
 
