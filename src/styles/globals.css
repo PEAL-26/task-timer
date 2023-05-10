@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --black: #1E1E1E;
+  --black-light: #2B2F33;
+  --gray: #959799;
+  --blue: #2A82FF;
+  --red: #D33C3C;
+  --green: #5EAC55;
+  --white: #FFFFFF;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--black);
+  color: var(--gray);
+}
