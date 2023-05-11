@@ -1,9 +1,9 @@
 'use client';
 
+import { createContext, useContext, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { createContext, useState, useContext } from 'react';
 
-import { TarefaInterface, EstadoEnum } from '@/types/tarefa';
+import { EstadoEnum, TarefaInterface } from '@/types/data-types';
 
 interface TarefaContextData {
     tarefas: TarefaInterface[];
@@ -41,7 +41,6 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
             if (tarefa.id === id) {
                 return {
                     ...tarefa,
-                    tempo: new Date().toTimeString(),
                     estado: EstadoEnum.INICIADA
                 };
             } else {
@@ -57,7 +56,6 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
             if (tarefa.id === id) {
                 return {
                     ...tarefa,
-                    tempo: new Date().toTimeString(),
                     estado: EstadoEnum.PAUSADA
                 };
             } else {
@@ -73,7 +71,7 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
             if (tarefa.id === id) {
                 return {
                     ...tarefa,
-                    dataConclusao: new Date().toDateString(),
+                    dataConclusao: new Date(),
                     estado: EstadoEnum.CONCLUIDA
                 };
             } else {

@@ -1,8 +1,8 @@
-import { BsCircle, BsFillCheckCircleFill } from 'react-icons/bs';
 
-import { useTarefaContext } from "../contexts/tarefa-context";
-import { EstadoIcon } from './estado-icon';
 import { useEffect, useState } from 'react';
+import { useTarefaContext } from "../contexts/tarefa-context";
+import { EstadoEnum } from '../types/data-types';
+import { EstadoIcon } from './estado-icon';
 
 interface Props {
     tarefaId?: string;
@@ -16,7 +16,7 @@ export function Temporizador(props: Props) {
     const [play, setPlay] = useState(false);
 
     const handleEstadoToggle = () => {
-        if (tarefa.estado === 'INICIADA')
+        if (tarefa.estado === EstadoEnum.INICIADA)
             pausar(tarefaId ?? '');
         else
             iniciar(tarefaId ?? '')
@@ -32,8 +32,11 @@ export function Temporizador(props: Props) {
 
     return (
         <div className="flex items-center justify-between w-full">
-            <span className='text-xs flex-1'>{tarefa.tempo}</span>
-            <EstadoIcon play={play} onClick={handleEstadoToggle} />
+            <span className='text-xs flex-1'>{`${tarefa.dataInicio}-${tarefa.dataConclusao}`}</span>
+            {tarefa.estado !== EstadoEnum.CONCLUIDA
+                ? <EstadoIcon play={play} onClick={handleEstadoToggle} />
+                : null
+            }
         </div>
     );
 }
