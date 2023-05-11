@@ -29,10 +29,10 @@ export default function TabelaTarefas() {
                         <td className="w-[48%] text-left py-2 px-4 flex items-center">{<TarefaIcon tarefaId={id} />}</td>
                         <td className="w-1/5 text-left border-l border-gray/20 py-2 px-4 flex items-center">
                             <span className='text-xs'>{projecto ?? 'Nenhum'}</span>
-                            </td>
+                        </td>
                         <td className="w-2/12 text-left border-l border-gray/20 py-2 px-4 flex items-center">
                             {<Temporizador tarefaId={id} />}
-                            </td>
+                        </td>
                         <td className="w-2/12 text-left border-l border-gray/20 py-2 px-4 flex items-center">
                             {dataConclusao
                                 ? <span className='text-xs'>{dataConclusao.toDateString()}</span>
@@ -41,7 +41,7 @@ export default function TabelaTarefas() {
                                     onClick={(e) => handleConcluir(e, id ?? '')}
                                 >
                                     Concluir
-                                    </a>
+                                </a>
                             }
                         </td>
                     </tr>
