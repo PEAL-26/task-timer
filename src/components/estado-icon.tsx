@@ -10,7 +10,7 @@ export function EstadoIcon(props: Props) {
 
     return (
         <button className="flex items-center justify-center" onClick={onClick}>
-            {play ? <CiPlay1 size={24} /> : <CiPause1 className='fill-red' size={24} />}
+            {play ? <CiPause1 className='fill-red' size={24} /> : <CiPlay1 size={24} />}
         </button>
     );
 }

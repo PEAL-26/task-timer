@@ -3,12 +3,13 @@
 import { HTMLProps, useRef, useState } from "react";
 
 import Tippy from '@tippyjs/react';
-import { AiOutlineCalendar, AiOutlineSend } from 'react-icons/ai';
 import { BsTag } from 'react-icons/bs';
 import { MdOutlineTimer } from 'react-icons/md';
+import { AiOutlineCalendar, AiOutlineSend } from 'react-icons/ai';
 
 import { useTarefaContext } from "@/contexts/tarefa-context";
 import { TarefaInterface } from "../types/data-types";
+import { DateTimePicker } from "./datetime-picker";
 
 interface Props extends HTMLProps<HTMLInputElement> {
 
@@ -18,8 +19,6 @@ export function AdicionarTarefa(props: Props) {
     const { adicionar } = useTarefaContext();
     const [formData, setFormData] = useState<TarefaInterface | null>(null);
     const [openProjecto, setOpenProjecto] = useState(false);
-    const refPopover = useRef<HTMLDivElement>(null);
-    const refElement = useRef<HTMLButtonElement>(null);
 
     const handleChangeTarefa = () => {
         // setFormData({ formData: value, projecto, tempo, dataConclusao })
@@ -89,46 +88,12 @@ export function AdicionarTarefa(props: Props) {
                 {/* Metas: {Inicio, Conclusão} */}
                 <Tippy
                     content={
-                        <div className="flex flex-col bg-black-light rounded-md py-3 px-4 mb-2 w-56 shadow-white">
-                            <span className="text-base text-gray">Metas:</span>
+                        <div className="flex flex-col bg-black-light rounded-md py-3 px-4 mb-2 w-56 border-[0.5px]">
+                            <span className="text-base text-gray mb-3">Metas:</span>
                             <span className="text-xs">Data de Início</span>
-                            <input
-                                type="datetime-local"
-                                name=""
-                                id=""
-                                className="w-full bg-black-light placeholder-gray text-white border-none outline-none"
-                                placeholder="Projecto ou categoria"
-                                value={formData?.projecto ?? ''}
-                                onChange={(event) => {
-                                    setFormData({
-                                        ...formData,
-                                        dataMeta: {
-                                            ...formData.dataMeta,
-                                            inicio: new Date(event.target.value)
-                                        }
-                                    })
-                                    handleChangeTarefa();
-                                }}
-                            />
-                            <span className="text-xs">Data de Conclusão</span>
-                            <input
-                                type="datetime-local"
-                                name=""
-                                id=""
-                                className="w-full bg-black-light placeholder-gray text-white border-none outline-none"
-                                placeholder="Projecto ou categoria"
-                                value={formData?.projecto ?? ''}
-                                onChange={(event) => {
-                                    setFormData({
-                                        ...formData,
-                                        dataMeta: {
-                                            ...formData.dataMeta,
-                                            conclusao: new Date(event.target.value)
-                                        }
-                                    })
-                                    handleChangeTarefa();
-                                }}
-                            />
+                            <DateTimePicker />
+                            <span className="text-xs mt-2">Data de Conclusão</span>
+                            <DateTimePicker />
                         </div>
                     }
                     allowHTML
@@ -136,6 +101,8 @@ export function AdicionarTarefa(props: Props) {
                     duration={0}
                     animation={'perspective-subtle'}
                     trigger={'click'}
+                    placement='left'
+
                 >
                     <button type="button"><AiOutlineCalendar size={24} /></button>
                 </Tippy>

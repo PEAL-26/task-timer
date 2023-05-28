@@ -13,6 +13,8 @@ interface TarefaContextData {
     iniciar(id: string): void;
     pausar(id: string): void;
     concluir(id: string): void;
+    actualizarTempoInicio(id: string, tempo: number): void;
+    actualizarTempoFim(id: string, tempo: number): void;
 }
 
 type Props = {
@@ -23,6 +25,12 @@ const TarefaContext = createContext<TarefaContextData>({} as TarefaContextData);
 
 export const TarefaProvider: React.FC<Props> = ({ children }) => {
     const [tarefas, setTarefas] = useState<TarefaInterface[]>([]);
+
+    const buscarTarefaPorId = (id: string) => {
+        const tarefa = tarefas.find(value => value.id === id);
+
+        return tarefa ?? null;
+    }
 
     const adicionar = (tarefa: TarefaInterface) => {
         setTarefas([...tarefas, { ...tarefa, id: uuidv4() }]);
@@ -82,6 +90,38 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
         setTarefas(novaListaTarefas);
     }
 
+    const actualizarTempoInicio = (id: string, tempo: number) => {
+        // const novaListaTarefas = tarefas.map(tarefa => {
+        //     if (tarefa.id === id) {
+        //         return {
+        //             ...tarefa,
+        //             dataConclusao: new Date(tempo),
+        //             cronometro: [...tarefa.cronometro ?? [], { inicio: tempo }],
+        //         };
+        //     } else {
+        //         return tarefa;
+        //     }
+        // });
+
+        // setTarefas(novaListaTarefas);
+    }
+
+    const actualizarTempoFim = (id: string, tempo: number) => {
+        // const novaListaTarefas = tarefas.map(tarefa => {
+        //     if (tarefa.id === id) {
+        //         return {
+        //             ...tarefa,
+        //             dataConclusao: new Date(tempo),
+        //             cronometro: [...tarefa.cronometro, {}],
+        //         };
+        //     } else {
+        //         return tarefa;
+        //     }
+        // });
+
+        // setTarefas(novaListaTarefas);
+    }
+
     return (
         <TarefaContext.Provider
             value={{
@@ -91,7 +131,9 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
                 remover,
                 iniciar,
                 pausar,
-                concluir
+                concluir,
+                actualizarTempoInicio,
+                actualizarTempoFim
             }}>
             {children}
         </TarefaContext.Provider>
