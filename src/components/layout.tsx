@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode, useEffect, useState } from "react";
 import { TitleBar } from "./title-bar";
 import { SideBar } from "./side-bar";
