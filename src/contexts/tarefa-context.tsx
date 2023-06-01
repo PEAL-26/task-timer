@@ -15,6 +15,7 @@ interface TarefaContextData {
     concluir(id: string): void;
     actualizarTempoInicio(id: string, tempo: number): void;
     actualizarTempoFim(id: string, tempo: number): void;
+    buscarTarefaPorId(id: string): Promise<TarefaInterface | null>;
 }
 
 type Props = {
@@ -26,10 +27,16 @@ const TarefaContext = createContext<TarefaContextData>({} as TarefaContextData);
 export const TarefaProvider: React.FC<Props> = ({ children }) => {
     const [tarefas, setTarefas] = useState<TarefaInterface[]>([]);
 
-    const buscarTarefaPorId = (id: string) => {
-        const tarefa = tarefas.find(value => value.id === id);
+    const buscarTarefaPorId = async (id: string) => {
+        console.log({ id });
 
-        return tarefa ?? null;
+        const promise = new Promise<TarefaInterface | null>((resolve) => {
+            const tarefa = tarefas.find(value => value.id === id);
+
+            resolve(tarefa ?? null);
+        })
+
+        return promise;
     }
 
     const adicionar = (tarefa: TarefaInterface) => {
@@ -133,7 +140,8 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
                 pausar,
                 concluir,
                 actualizarTempoInicio,
-                actualizarTempoFim
+                actualizarTempoFim,
+                buscarTarefaPorId
             }}>
             {children}
         </TarefaContext.Provider>
