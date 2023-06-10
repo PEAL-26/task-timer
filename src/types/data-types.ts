@@ -54,8 +54,8 @@ export interface EstadoTarefaInterface {
 export interface TarefaInterface {
   id?: string;
   tarefaPrincipalId?: string | null;
-  tarefa: string;
-  nota?: string;
+  titulo: string;
+  notas?: string;
   projecto?: string | null;
   cronometro?: CronometroInterface[] | null;
   dataInicio?: Date | null;

@@ -2,7 +2,6 @@ import { useState } from "react";
 import Tippy from "@tippyjs/react";
 import Calendar from "react-calendar";
 import { AiOutlineCalendar } from "react-icons/ai";
-import NumeroRelogio from "./numero-relogio";
 import Relogio from "./relogio";
 
 export function DateTimePicker() {

@@ -24,7 +24,7 @@ export function TarefaIcon(props: Props) {
     return (
         <div className="flex items-center">
             {icon()}
-            <span className='ml-2 cursor-pointer'>{tarefa?.tarefa}</span>
+            <span className='ml-2 cursor-pointer'>{tarefa?.titulo}</span>
         </div>
     );
 }

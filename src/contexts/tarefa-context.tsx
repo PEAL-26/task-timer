@@ -8,6 +8,7 @@ import { EstadoEnum, TarefaInterface } from '@/types/data-types';
 interface TarefaContextData {
     tarefas: TarefaInterface[];
     adicionar(tarefa: TarefaInterface): void;
+    adicionarSubTarefa(tarefaId: string, tarefa: TarefaInterface): void;
     editar(id: string, tarefa: TarefaInterface): void;
     remover(id: string): void;
     iniciar(id: string): void;
@@ -16,6 +17,7 @@ interface TarefaContextData {
     actualizarTempoInicio(id: string, tempo: number): void;
     actualizarTempoFim(id: string, tempo: number): void;
     buscarTarefaPorId(id: string): Promise<TarefaInterface | null>;
+    listarSubTarefasPorTarefa(tarefaId: string): Promise<TarefaInterface[]>;
 }
 
 type Props = {
@@ -26,10 +28,9 @@ const TarefaContext = createContext<TarefaContextData>({} as TarefaContextData);
 
 export const TarefaProvider: React.FC<Props> = ({ children }) => {
     const [tarefas, setTarefas] = useState<TarefaInterface[]>([]);
+    const [subTarefas, setSubTarefas] = useState<TarefaInterface[]>([]);
 
     const buscarTarefaPorId = async (id: string) => {
-        console.log({ id });
-
         const promise = new Promise<TarefaInterface | null>((resolve) => {
             const tarefa = tarefas.find(value => value.id === id);
 
@@ -39,8 +40,22 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
         return promise;
     }
 
+    const listarSubTarefasPorTarefa = async (tarefaId: string) => {
+        const promise = new Promise<TarefaInterface[]>((resolve) => {
+            const _subTarefas = subTarefas.filter(tarefa => tarefa.tarefaPrincipalId === tarefaId);
+
+            resolve(_subTarefas);
+        })
+
+        return promise;
+    }
+
     const adicionar = (tarefa: TarefaInterface) => {
         setTarefas([...tarefas, { ...tarefa, id: uuidv4() }]);
+    }
+
+    const adicionarSubTarefa = (tarefaId: string, tarefa: TarefaInterface) => {
+        setSubTarefas([...subTarefas, { ...tarefa, id: uuidv4(), tarefaPrincipalId: tarefaId }]);
     }
 
     const editar = (id: string, tarefa: TarefaInterface) => {
@@ -48,7 +63,7 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
     }
 
     const remover = (id: string) => {
-
+        setTarefas(prevItems => prevItems.filter(prevItem => prevItem.id !== id));
     }
 
     const iniciar = (id: string) => {
@@ -134,6 +149,7 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
             value={{
                 tarefas,
                 adicionar,
+                adicionarSubTarefa,
                 editar,
                 remover,
                 iniciar,
@@ -141,7 +157,8 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
                 concluir,
                 actualizarTempoInicio,
                 actualizarTempoFim,
-                buscarTarefaPorId
+                buscarTarefaPorId,
+                listarSubTarefasPorTarefa
             }}>
             {children}
         </TarefaContext.Provider>

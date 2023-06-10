@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 
 import NumeroRelogio from "./numero-relogio";
-import { incrementNumberArray } from "../helpers/number-helper";
+import { incrementNumberArray } from "../../helpers/number-helper";
 import SetasRelogio from "./setas-relogio";
 
 export default function Relogio() {

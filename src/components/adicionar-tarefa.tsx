@@ -46,14 +46,14 @@ export function AdicionarTarefa(props: Props) {
                 id=""
                 className="w-full bg-black-light placeholder-gray text-white border-none outline-none"
                 placeholder="Adicione uma tarefa"
-                value={formData?.tarefa ?? ''}
+                value={formData?.titulo ?? ''}
                 onChange={(event) => {
-                    setFormData({ ...formData, tarefa: event.target.value })
+                    setFormData({ ...formData, titulo: event.target.value })
                     handleChangeTarefa();
                 }}
             />
 
-            {formData?.tarefa && <div className="absolute top-0 right-0 h-full flex items-center justify-center p-3 gap-3">
+            {formData?.titulo && <div className="absolute top-0 right-0 h-full flex items-center justify-center p-3 gap-3">
 
                 {/* Projecto/Categoria */}
                 <Tippy
