@@ -1,6 +1,7 @@
 import { BsCircle, BsFillCheckCircleFill } from 'react-icons/bs';
 
 import { useTarefaContext } from "../contexts/tarefa-context";
+import { EstadoEnum } from '@/types/data-types';
 
 interface Props {
     tarefaId?: string;
@@ -8,7 +9,7 @@ interface Props {
 
 export function TarefaIcon(props: Props) {
     const { tarefaId } = props;
-    const { tarefas } = useTarefaContext();
+    const { tarefas, subTarefas } = useTarefaContext();
 
     const [tarefa] = tarefas.filter(({ id }) => id === tarefaId);
 
@@ -24,7 +25,12 @@ export function TarefaIcon(props: Props) {
     return (
         <div className="flex items-center">
             {icon()}
-            <span className='ml-2 cursor-pointer'>{tarefa?.titulo}</span>
+            <div className="ml-2 flex flex-col cursor-pointer">
+                <span className=''>{tarefa?.titulo}</span>
+                {subTarefas.length > 0 && <span className='text-[9px] '>{
+                    `Subtarefas: ${subTarefas.filter(pre => pre.estado === EstadoEnum.CONCLUIDA).length} de ${subTarefas.length}`
+                }</span>}
+            </div>
         </div>
     );
 }

@@ -1,11 +1,16 @@
 import { ChangeEvent, ChangeEventHandler, KeyboardEvent, useEffect, useState } from "react";
 
-import { IoCloseSharp } from 'react-icons/io5';
+import { BsTag } from 'react-icons/bs';
 import { FaTrash } from 'react-icons/fa';
+import { IoCloseSharp } from 'react-icons/io5';
+import { MdOutlineTimer } from 'react-icons/md';
+import { AiOutlineCalendar } from 'react-icons/ai';
 
 import { InputCheck } from "./input-check";
 import { EstadoEnum, TarefaInterface } from "@/types/data-types";
 import { useTarefaContext } from "@/contexts/tarefa-context";
+import { InputAutoComplete } from "./input-auto-complete";
+import { DateTimePicker } from "./datetime-picker";
 
 interface Props {
     tarefaId: string;
@@ -15,7 +20,16 @@ interface Props {
 
 export function EditarTarefa(props: Props) {
     const { tarefaId, mostrar, onHidden } = props;
-    const { subTarefas: _subTarefas, buscarTarefaPorId, listarSubTarefasPorTarefa, adicionarSubTarefa, remover } = useTarefaContext();
+
+    const {
+        subTarefas: _subTarefas,
+        projectos,
+        buscarTarefaPorId,
+        adicionarSubTarefa,
+        editarSubTarefa,
+        remover
+    } = useTarefaContext();
+
     const [tarefa, setTarefa] = useState<TarefaInterface | null>(null);
     const [subTarefa, setSubTarefa] = useState('');
 
@@ -53,8 +67,8 @@ export function EditarTarefa(props: Props) {
 
     // Handle Subtarefa
     //TODO Implementar funções
-    const handleValueChangeSubtarefa = (value: string) => {
-        console.log('handleValueChangeSubtarefa', value)
+    const handleValueChangeSubtarefa = (id: string, value: string) => {
+        if (id) editarSubTarefa(id, { titulo: value });
     }
 
     const handleDeleteSubtarefa = (id: string) => {
@@ -108,11 +122,10 @@ export function EditarTarefa(props: Props) {
                             size="text-xl"
                             value={tarefa?.titulo}
                             state={tarefa?.estado}
-                            onValueChange={(value) => {
+                            onChangeValue={(value) => {
                                 setTarefa({ ...tarefa, titulo: value });
                             }}
-                            onStateChange={(e) => handleToggleEstadoTarefa(tarefaId, e)}
-
+                            onChangeState={(e) => handleToggleEstadoTarefa(tarefaId, e)}
                         />
 
                         {subTarefas.map(({ id, titulo, estado }) =>
@@ -120,14 +133,16 @@ export function EditarTarefa(props: Props) {
                             <InputCheck
                                 key={id}
                                 menu={true}
+                                tarefaId={id}
                                 value={titulo}
                                 state={estado}
+                                descricao={titulo}
                                 classNameContainer='mb-1'
 
-                                onValueChange={handleValueChangeSubtarefa}
+                                onChangeValue={(value) => handleValueChangeSubtarefa(id ?? '', value)}
                                 onDelete={() => handleDeleteSubtarefa(id ?? '')}
                                 onPromotingTask={() => handlePromoverSubTarefa(id ?? '')}
-                                onStateChange={(e) => handleToggleEstadoSubtarefa(id ?? '', e)}
+                                onChangeState={(e) => handleToggleEstadoSubtarefa(id ?? '', e)}
                             />
                             <hr className="border-gray/30 w-full mb-2" />
                         </>)
@@ -136,7 +151,7 @@ export function EditarTarefa(props: Props) {
                         <InputCheck
                             type='add'
                             value={subTarefa}
-                            onValueChange={setSubTarefa}
+                            onChangeValue={setSubTarefa}
                             onKeyDown={adicionarSubMenu}
                             placeholder="Adicionar subtarefa"
                         />
@@ -144,16 +159,43 @@ export function EditarTarefa(props: Props) {
 
                     {/* Outras Opções */}
                     <div className="flex flex-col bg-black-light w-full rounded-md px-2 py-3">
-                        <p>Projecto</p>
+                        <div className="flex items-center gap-2">
+                            <BsTag size={20} />
+                            <InputAutoComplete
+                                value={tarefa?.projecto ?? ''}
+                                onChangeValue={(value) => {
+                                    setTarefa({ ...tarefa, titulo: tarefa?.titulo ?? '', projecto: value });
+                                }}
+                                items={projectos}
+                            />
+                        </div>
                         <hr className="border-gray/30 w-full my-2" />
-                        <p>Lembrete</p>
+                        <div className="flex items-center gap-2">
+                            <DateTimePicker />
+                            -
+                            <DateTimePicker />
+                        </div>
                         <hr className="border-gray/30 w-full my-2" />
-                        <p>Metas</p>
+                        <div className="flex items-center gap-2">
+                            <MdOutlineTimer size={20} />
+                            <p>Lembrete</p>
+                        </div>
                     </div>
 
                     {/* Cronómetro */}
                     <div className="flex flex-col bg-black-light w-full rounded-md px-2 py-3">
                         Cronómetro
+                        {tarefa?.cronometro?.map(({ descricao, dataInicio, tempo }) => (
+                            <div className="flex justify-between">
+                                <p>{descricao}</p>
+
+                                <div className="flex">
+                                    <p>{dataInicio.toString()}</p>
+                                    -
+                                    <p>{tempo}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Notas */}

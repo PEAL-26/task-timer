@@ -1,35 +1,42 @@
 
 import { useEffect, useState } from 'react';
+
 import { useTarefaContext } from "../contexts/tarefa-context";
 import { EstadoEnum } from '../types/data-types';
 import { EstadoIcon } from './estado-icon';
 
 interface Props {
     tarefaId?: string;
+    descricao?: string;
 }
 
 export function Temporizador(props: Props) {
-    const { tarefaId } = props;
+    const { tarefaId, descricao } = props;
+
     const {
         tarefas,
         iniciar,
-        pausar
+        pausar,
+        adicinarCronometro
     } = useTarefaContext();
+
     const [tarefa] = tarefas.filter(({ id }) => id === tarefaId);
+
     const [play, setPlay] = useState(false);
-    const [time, setTime] = useState(0);
+    const [tempo, setTempo] = useState(0);
+    const [dataInicio, setDataInicio] = useState<Date | null>(null);
 
     const handleEstadoToggle = () => {
-        if (tarefa.estado === EstadoEnum.INICIADA)
+        if (tarefa?.estado === EstadoEnum.INICIADA)
             pausar(tarefaId ?? '');
         else
             iniciar(tarefaId ?? '')
     }
 
-    const formatTime = (time: number) => {
-        const hours = Math.floor(time / 3600);
-        const minutes = Math.floor((time % 3600) / 60);
-        const seconds = time % 60;
+    const formatTime = (tempo: number) => {
+        const hours = Math.floor(tempo / 3600);
+        const minutes = Math.floor((tempo % 3600) / 60);
+        const seconds = tempo % 60;
 
         const formattedHours = String(hours).padStart(2, '0');
         const formattedMinutes = String(minutes).padStart(2, '0');
@@ -39,21 +46,26 @@ export function Temporizador(props: Props) {
     };
 
     useEffect(() => {
-        if (tarefa.estado === 'INICIADA')
+        if (tarefa?.estado === 'INICIADA')
             setPlay(true);
         else
             setPlay(false);
-    }, [tarefa.estado]);
+    }, [tarefa?.estado]);
 
     useEffect(() => {
         if (play) {
+            setDataInicio(new Date());
             const intervalId = setInterval(() => {
-                setTime(prevTime => prevTime + 1);
+                setTempo(prevTime => prevTime + 1);
             }, 1000);
 
             return () => clearInterval(intervalId);
         } else {
-            setTime(0);
+
+            if (tarefaId && dataInicio) {
+                adicinarCronometro(tarefaId, { descricao: descricao ?? '', dataInicio, tempo });
+                setTempo(0);
+            }
         }
     }, [play]);
 
@@ -61,12 +73,12 @@ export function Temporizador(props: Props) {
         <div className="flex items-center justify-between w-full">
             <span className='text-xs flex-1'>
                 {play
-                    ? formatTime(time)
-                    : `${tarefa.dataInicio}-${tarefa.dataConclusao}`
+                    ? formatTime(tempo)
+                    : `${tarefa?.dataInicio}-${tarefa?.dataConclusao}`
                 }
             </span>
 
-            {tarefa.estado !== EstadoEnum.CONCLUIDA
+            {tarefa?.estado !== EstadoEnum.CONCLUIDA
                 ? <EstadoIcon play={play} onClick={handleEstadoToggle} />
                 : null
             }

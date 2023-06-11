@@ -11,8 +11,9 @@ export enum ImportanciaEnum {
 }
 
 export interface CronometroInterface {
-  inicio: string;
-  fim: string;
+  descricao: string;
+  dataInicio: Date;
+  tempo: number;
 }
 
 export enum LembreteTipoEnum {

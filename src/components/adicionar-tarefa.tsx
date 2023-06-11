@@ -1,6 +1,6 @@
 'use client';
 
-import { HTMLProps, useRef, useState } from "react";
+import { HTMLProps, useState } from "react";
 
 import Tippy from '@tippyjs/react';
 import { BsTag } from 'react-icons/bs';
@@ -8,15 +8,14 @@ import { MdOutlineTimer } from 'react-icons/md';
 import { AiOutlineCalendar, AiOutlineSend } from 'react-icons/ai';
 
 import { useTarefaContext } from "@/contexts/tarefa-context";
+import { InputAutoComplete } from "./input-auto-complete";
 import { TarefaInterface } from "../types/data-types";
 import { DateTimePicker } from "./datetime-picker";
 
-interface Props extends HTMLProps<HTMLInputElement> {
-
-}
+interface Props extends HTMLProps<HTMLInputElement> { }
 
 export function AdicionarTarefa(props: Props) {
-    const { adicionar } = useTarefaContext();
+    const { adicionar, projectos } = useTarefaContext();
     const [formData, setFormData] = useState<TarefaInterface | null>(null);
     const [openProjecto, setOpenProjecto] = useState(false);
 
@@ -42,8 +41,6 @@ export function AdicionarTarefa(props: Props) {
         <form className="flex bg-black-light rounded-md py-3 px-4 mb-6 relative" onSubmit={handleSubmit}>
             <input
                 type="text"
-                name=""
-                id=""
                 className="w-full bg-black-light placeholder-gray text-white border-none outline-none"
                 placeholder="Adicione uma tarefa"
                 value={formData?.titulo ?? ''}
@@ -54,22 +51,18 @@ export function AdicionarTarefa(props: Props) {
             />
 
             {formData?.titulo && <div className="absolute top-0 right-0 h-full flex items-center justify-center p-3 gap-3">
-
                 {/* Projecto/Categoria */}
                 <Tippy
                     content={
                         <div className="bg-black-light rounded-md py-3 px-4 mb-2 w-56">
-                            <input
-                                type="text"
-                                name=""
-                                id=""
-                                className="w-full bg-black-light placeholder-gray text-white border-none outline-none"
-                                placeholder="Projecto ou categoria"
+                            <InputAutoComplete
                                 value={formData?.projecto ?? ''}
-                                onChange={(event) => {
-                                    setFormData({ ...formData, projecto: event.target.value })
+                                onChangeValue={(value) => {
+                                    setFormData({ ...formData, projecto: value })
                                     handleChangeTarefa();
                                 }}
+                                items={projectos}
+                                placeholder="Projecto ou categoria"
                             />
                         </div>
                     }

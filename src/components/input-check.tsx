@@ -7,11 +7,14 @@ import { SlOptionsVertical } from 'react-icons/sl';
 import { BsCircle, BsFillCheckCircleFill } from 'react-icons/bs';
 
 import { EstadoEnum } from '@/types/data-types';
+import { Temporizador } from './temporizador';
 
 interface Props {
     size?: string;
     menu?: boolean;
     value?: string;
+    tarefaId?: string;
+    descricao?: string;
     state?: EstadoEnum;
     placeholder?: string;
     type?: 'normal' | 'add';
@@ -19,8 +22,8 @@ interface Props {
 
     onDelete?(): void;
     onPromotingTask?(): void;
-    onStateChange?(state: EstadoEnum): void;
-    onValueChange?(value: string): void;
+    onChangeState?(state: EstadoEnum): void;
+    onChangeValue?(value: string): void;
     onKeyDown?(event: KeyboardEvent<HTMLInputElement>): void;
 }
 
@@ -30,14 +33,16 @@ export function InputCheck(props: Props) {
         menu,
         state,
         value,
+        tarefaId,
+        descricao,
         placeholder,
         type = 'normal',
         classNameContainer,
 
         onDelete,
         onKeyDown,
-        onStateChange,
-        onValueChange,
+        onChangeState,
+        onChangeValue,
         onPromotingTask,
     } = props;
 
@@ -56,9 +61,9 @@ export function InputCheck(props: Props) {
 
     const handleOnStateChange = () => {
         if (state && state === EstadoEnum.CONCLUIDA) {
-            onStateChange && onStateChange(EstadoEnum.PENDENTE);
+            onChangeState && onChangeState(EstadoEnum.PENDENTE);
         } else {
-            onStateChange && onStateChange(EstadoEnum.CONCLUIDA);
+            onChangeState && onChangeState(EstadoEnum.CONCLUIDA);
         }
 
         isMenu && hide();
@@ -76,7 +81,7 @@ export function InputCheck(props: Props) {
 
     const handleOnValueChange = (e: ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
-        onValueChange && onValueChange(e.target.value);
+        onChangeValue && onChangeValue(e.target.value);
     }
 
     const icon = () => {
@@ -135,43 +140,47 @@ export function InputCheck(props: Props) {
                 onFocus={onFocus}
                 onBlur={onBlur}
             />
-            {isMenu && <Tippy visible={visible} onClickOutside={hide}
-                content={
-                    <div className="bg-black rounded-sm w-56 flex flex-col">
-                        <button className='p-2 hover:bg-gray/20 rounded-t-sm text-left flex items-center gap-2' onClick={handleOnStateChange}>
-                            {state === EstadoEnum.CONCLUIDA
-                                ? <> <BsCircle />Marcar como não concluída </>
-                                : <>
-                                    <div className='bg-white rounded-full'>
-                                        <BsFillCheckCircleFill className={`stroke-white fill-green`} />
-                                    </div>Marcar como concluída
-                                </>}
+            {isMenu &&
+                <div className='flex items-center gap-2'>
+                    <Temporizador tarefaId={tarefaId} descricao={descricao} />
+                    <Tippy visible={visible} onClickOutside={hide}
+                        content={
+                            <div className="bg-black rounded-sm w-56 flex flex-col">
+                                <button className='p-2 hover:bg-gray/20 rounded-t-sm text-left flex items-center gap-2' onClick={handleOnStateChange}>
+                                    {state === EstadoEnum.CONCLUIDA
+                                        ? <> <BsCircle />Marcar como não concluída </>
+                                        : <>
+                                            <div className='bg-white rounded-full'>
+                                                <BsFillCheckCircleFill className={`stroke-white fill-green`} />
+                                            </div>Marcar como concluída
+                                        </>}
+                                </button>
+
+
+                                {state !== EstadoEnum.CONCLUIDA && <button className='p-2 hover:bg-gray/20 text-left flex items-center gap-2' onClick={handleOnPromotingTask}>
+                                    <AiOutlinePlus className={`cursor-text ${size ?? ''}`} onClick={() => refInput?.current?.focus()} />
+                                    Promover para tarefa
+                                </button>}
+
+                                <hr className="border-gray/30 w-full" />
+
+                                <button className='p-2 hover:bg-gray/20 rounded-b-sm text-red/75 text-left flex items-center gap-2' onClick={handleOnDelete}>
+                                    <FaTrash />Remover Subtarefa
+                                </button>
+                            </div>
+                        }
+                        allowHTML
+                        interactive
+                        duration={0}
+                        animation='perspective'
+                        trigger='click'
+                        placement='bottom-end'
+                    >
+                        <button onClick={visible ? hide : show}>
+                            <SlOptionsVertical className='fill-white cursor-pointer' />
                         </button>
-
-
-                        {state !== EstadoEnum.CONCLUIDA && <button className='p-2 hover:bg-gray/20 text-left flex items-center gap-2' onClick={handleOnPromotingTask}>
-                            <AiOutlinePlus className={`cursor-text ${size ?? ''}`} onClick={() => refInput?.current?.focus()} />
-                            Promover para tarefa
-                        </button>}
-
-                        <hr className="border-gray/30 w-full" />
-
-                        <button className='p-2 hover:bg-gray/20 rounded-b-sm text-red/75 text-left flex items-center gap-2' onClick={handleOnDelete}>
-                            <FaTrash />Remover Subtarefa
-                        </button>
-                    </div>
-                }
-                allowHTML
-                interactive
-                duration={0}
-                animation='perspective'
-                trigger='click'
-                placement='bottom-end'
-            >
-                <button onClick={visible ? hide : show}>
-                    <SlOptionsVertical className='fill-white cursor-pointer' />
-                </button>
-            </Tippy>}
+                    </Tippy>
+                </div>}
         </div>
     );
 }
