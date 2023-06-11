@@ -7,6 +7,7 @@ import { EstadoEnum, TarefaInterface } from '@/types/data-types';
 
 interface TarefaContextData {
     tarefas: TarefaInterface[];
+    subTarefas: TarefaInterface[];
     adicionar(tarefa: TarefaInterface): void;
     adicionarSubTarefa(tarefaId: string, tarefa: TarefaInterface): void;
     editar(id: string, tarefa: TarefaInterface): void;
@@ -148,6 +149,7 @@ export const TarefaProvider: React.FC<Props> = ({ children }) => {
         <TarefaContext.Provider
             value={{
                 tarefas,
+                subTarefas,
                 adicionar,
                 adicionarSubTarefa,
                 editar,

@@ -1,6 +1,7 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import Tippy from '@tippyjs/react';
 
+import { FaTrash } from 'react-icons/fa';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { SlOptionsVertical } from 'react-icons/sl';
 import { BsCircle, BsFillCheckCircleFill } from 'react-icons/bs';
@@ -8,20 +9,37 @@ import { BsCircle, BsFillCheckCircleFill } from 'react-icons/bs';
 import { EstadoEnum } from '@/types/data-types';
 
 interface Props {
+    size?: string;
+    menu?: boolean;
     value?: string;
     state?: EstadoEnum;
-    size?: string;
     placeholder?: string;
-    classNameContainer?: string;
     type?: 'normal' | 'add';
-    menu?: boolean;
-    onChecked?(state: boolean): void;
+    classNameContainer?: string;
+
+    onDelete?(): void;
+    onPromotingTask?(): void;
+    onStateChange?(state: EstadoEnum): void;
     onValueChange?(value: string): void;
     onKeyDown?(event: KeyboardEvent<HTMLInputElement>): void;
 }
 
 export function InputCheck(props: Props) {
-    const { value, state, size, placeholder, type = 'normal', classNameContainer, onChecked, onValueChange, onKeyDown, menu } = props;
+    const {
+        size,
+        menu,
+        state,
+        value,
+        placeholder,
+        type = 'normal',
+        classNameContainer,
+
+        onDelete,
+        onKeyDown,
+        onStateChange,
+        onValueChange,
+        onPromotingTask,
+    } = props;
 
     const [inputValue, setInputValue] = useState('');
     const [inputPlaceholder, setInputPlaceholder] = useState('');
@@ -29,12 +47,31 @@ export function InputCheck(props: Props) {
     const refInput = useRef<HTMLInputElement | null>(null);
 
     let inputIsEmpty = true;
+
+    // Menu
     let isMenu = !!menu;
+    const [visible, setVisible] = useState(false);
+    const show = () => setVisible(true);
+    const hide = () => setVisible(false);
 
-    console.log({ isMenu });
+    const handleOnStateChange = () => {
+        if (state && state === EstadoEnum.CONCLUIDA) {
+            onStateChange && onStateChange(EstadoEnum.PENDENTE);
+        } else {
+            onStateChange && onStateChange(EstadoEnum.CONCLUIDA);
+        }
 
-    const handleOnChecked = () => {
-        onChecked && onChecked(true);
+        isMenu && hide();
+    }
+
+    const handleOnDelete = () => {
+        onDelete && onDelete();
+        isMenu && hide();
+    }
+
+    const handleOnPromotingTask = () => {
+        onPromotingTask && onPromotingTask();
+        isMenu && hide();
     }
 
     const handleOnValueChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -51,11 +88,11 @@ export function InputCheck(props: Props) {
                 return <BsCircle className={`cursor-text ${size ?? ''}`} onClick={() => refInput?.current?.focus()} />
         } else {
 
-            if (!state || state === 'INICIADA' || state === 'PENDENTE' || state === 'PAUSADA')
-                return <BsCircle className={`cursor-pointer ${size ?? ''}`} onClick={handleOnChecked} />
+            if (!state || state === EstadoEnum.INICIADA || state === EstadoEnum.PENDENTE || state === EstadoEnum.PAUSADA)
+                return <BsCircle className={`cursor-pointer ${size ?? ''}`} onClick={handleOnStateChange} />
 
             return (
-                <div className='bg-white rounded-full'>
+                <div className='bg-white rounded-full cursor-pointer' onClick={handleOnStateChange}>
                     <BsFillCheckCircleFill className={`stroke-white fill-green ${size ?? ''}`} />
                 </div>
             );
@@ -85,7 +122,7 @@ export function InputCheck(props: Props) {
     }, [inputValue]);
 
     return (
-        <div className={`relative flex items-center gap-2 ${classNameContainer ?? ''}`}>
+        <div className={`flex items-center gap-2 ${classNameContainer ?? ''}`}>
             {icon()}
             <input
                 ref={refInput}
@@ -98,10 +135,30 @@ export function InputCheck(props: Props) {
                 onFocus={onFocus}
                 onBlur={onBlur}
             />
-            <Tippy
+            {isMenu && <Tippy visible={visible} onClickOutside={hide}
                 content={
-                    <div className="bg-black rounded-md py-3 px-4 mb-2 w-56">
-                        <h1>Bla bla</h1>
+                    <div className="bg-black rounded-sm w-56 flex flex-col">
+                        <button className='p-2 hover:bg-gray/20 rounded-t-sm text-left flex items-center gap-2' onClick={handleOnStateChange}>
+                            {state === EstadoEnum.CONCLUIDA
+                                ? <> <BsCircle />Marcar como não concluída </>
+                                : <>
+                                    <div className='bg-white rounded-full'>
+                                        <BsFillCheckCircleFill className={`stroke-white fill-green`} />
+                                    </div>Marcar como concluída
+                                </>}
+                        </button>
+
+
+                        {state !== EstadoEnum.CONCLUIDA && <button className='p-2 hover:bg-gray/20 text-left flex items-center gap-2' onClick={handleOnPromotingTask}>
+                            <AiOutlinePlus className={`cursor-text ${size ?? ''}`} onClick={() => refInput?.current?.focus()} />
+                            Promover para tarefa
+                        </button>}
+
+                        <hr className="border-gray/30 w-full" />
+
+                        <button className='p-2 hover:bg-gray/20 rounded-b-sm text-red/75 text-left flex items-center gap-2' onClick={handleOnDelete}>
+                            <FaTrash />Remover Subtarefa
+                        </button>
                     </div>
                 }
                 allowHTML
@@ -111,12 +168,10 @@ export function InputCheck(props: Props) {
                 trigger='click'
                 placement='bottom-end'
             >
-                <>{isMenu && (
-                    <button type="button">
-                        <SlOptionsVertical className='fill-white cursor-pointer' />
-                    </button>)
-                }</>
-            </Tippy>
+                <button onClick={visible ? hide : show}>
+                    <SlOptionsVertical className='fill-white cursor-pointer' />
+                </button>
+            </Tippy>}
         </div>
     );
 }

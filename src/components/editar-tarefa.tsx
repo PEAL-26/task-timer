@@ -4,7 +4,7 @@ import { IoCloseSharp } from 'react-icons/io5';
 import { FaTrash } from 'react-icons/fa';
 
 import { InputCheck } from "./input-check";
-import { TarefaInterface } from "@/types/data-types";
+import { EstadoEnum, TarefaInterface } from "@/types/data-types";
 import { useTarefaContext } from "@/contexts/tarefa-context";
 
 interface Props {
@@ -15,25 +15,17 @@ interface Props {
 
 export function EditarTarefa(props: Props) {
     const { tarefaId, mostrar, onHidden } = props;
-    const { buscarTarefaPorId, listarSubTarefasPorTarefa, adicionarSubTarefa, remover } = useTarefaContext();
+    const { subTarefas: _subTarefas, buscarTarefaPorId, listarSubTarefasPorTarefa, adicionarSubTarefa, remover } = useTarefaContext();
     const [tarefa, setTarefa] = useState<TarefaInterface | null>(null);
     const [subTarefa, setSubTarefa] = useState('');
-    const [subTarefas, setSubTarefas] = useState<TarefaInterface[]>([]);
+
+    const subTarefas = _subTarefas.filter((sub) => sub.tarefaPrincipalId === tarefaId);
 
     const adicionarSubMenu = async (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             adicionarSubTarefa(tarefaId, { titulo: subTarefa });
-
-            await carregarListaSubTarefas();
             setSubTarefa('');
         }
-    }
-
-    const carregarListaSubTarefas = async () => {
-        const _subTarefas = await listarSubTarefasPorTarefa(tarefaId);
-
-        console.log(_subTarefas);
-        setSubTarefas(_subTarefas);
     }
 
     const getTarefa = async () => {
@@ -45,21 +37,43 @@ export function EditarTarefa(props: Props) {
         onHidden && onHidden(false);
     }
 
-    const handleDelete = () => {
+    const handleTarefaDelete = () => {
         remover(tarefaId);
         handleClose();
+    }
+
+    const handleToggleEstadoTarefa = (id: string, estado: EstadoEnum) => {
+
     }
 
     const handleChangeNota = ({ target }: ChangeEvent<HTMLTextAreaElement>) => {
         setTarefa({ ...tarefa, titulo: tarefa?.titulo ?? '', notas: target.value });
     };
 
+
+    // Handle Subtarefa
+    //TODO Implementar funções
+    const handleValueChangeSubtarefa = (value: string) => {
+        console.log('handleValueChangeSubtarefa', value)
+    }
+
+    const handleDeleteSubtarefa = (id: string) => {
+        console.log('handleDeleteSubtarefa', id)
+    }
+
+    const handleToggleEstadoSubtarefa = (id: string, estado: EstadoEnum) => {
+        console.log('handleDeleteSubtarefa', id, estado)
+    }
+
+    const handlePromoverSubTarefa = (id: string) => {
+        console.log('handlePromoverSubTarefa', id)
+    }
+
     useEffect(() => {
         if (mostrar) {
             document.body.style.overflow = "hidden";
 
             getTarefa();
-            carregarListaSubTarefas();
             setSubTarefa('');
         } else {
             document.body.style.overflow = "";
@@ -76,7 +90,7 @@ export function EditarTarefa(props: Props) {
                 className={`${mostrar ? 'right-0' : '-right-[1000px]'} transition-all duration-1000 ease-in-out absolute min-h-full w-[500px] bg-black shadow flex flex-col `}>
                 {/* Header */}
                 <div className="flex justify-between items-center px-4 py-3">
-                    <button type="button" className="p-2 hover:bg-gray/20 rounded-md" onClick={handleDelete}>
+                    <button type="button" className="p-2 hover:bg-gray/20 rounded-md" onClick={handleTarefaDelete}>
                         <FaTrash className='fill-gray cursor-pointer ' />
                     </button>
 
@@ -89,24 +103,35 @@ export function EditarTarefa(props: Props) {
                 <div className="flex flex-col flex-1 h-full px-4 gap-4 ">
                     {/* Tarefas e Subtarefas */}
                     <div className="flex flex-col bg-black-light w-full rounded-md px-2 py-3">
-                        <InputCheck classNameContainer='mb-3' value={tarefa?.titulo} size="text-xl" onValueChange={(value) => {
-                            setTarefa({ ...tarefa, titulo: value });
-                        }} />
+                        <InputCheck
+                            classNameContainer='mb-3'
+                            size="text-xl"
+                            value={tarefa?.titulo}
+                            state={tarefa?.estado}
+                            onValueChange={(value) => {
+                                setTarefa({ ...tarefa, titulo: value });
+                            }}
+                            onStateChange={(e) => handleToggleEstadoTarefa(tarefaId, e)}
 
-                        {subTarefas.map(({ id, titulo }) =>
+                        />
+
+                        {subTarefas.map(({ id, titulo, estado }) =>
                         (<>
                             <InputCheck
                                 key={id}
                                 menu={true}
                                 value={titulo}
+                                state={estado}
                                 classNameContainer='mb-1'
-                                onValueChange={() => { }}
+
+                                onValueChange={handleValueChangeSubtarefa}
+                                onDelete={() => handleDeleteSubtarefa(id ?? '')}
+                                onPromotingTask={() => handlePromoverSubTarefa(id ?? '')}
+                                onStateChange={(e) => handleToggleEstadoSubtarefa(id ?? '', e)}
                             />
                             <hr className="border-gray/30 w-full mb-2" />
                         </>)
                         )}
-
-                        {/* {subTarefas.length > 0 && <hr className="border-gray/30 w-full mb-2" />} */}
 
                         <InputCheck
                             type='add'
