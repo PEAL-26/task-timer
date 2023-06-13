@@ -44,7 +44,7 @@ export default function TabelaTarefas(props: Props) {
                                 <span className='text-xs'>{projecto ?? 'Nenhum'}</span>
                             </td>
                             <td className="w-2/12 text-left border-l border-gray/20 py-2 px-4 flex items-center">
-                                {<Temporizador tarefaId={id} descricao={titulo} />}
+                                {<Temporizador id={id} descricao={titulo} />}
                             </td>
                             <td className="w-2/12 text-left border-l border-gray/20 py-2 px-4 flex items-center">
                                 {dataConclusao

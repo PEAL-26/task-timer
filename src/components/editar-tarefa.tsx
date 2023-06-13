@@ -7,7 +7,7 @@ import { MdOutlineTimer } from 'react-icons/md';
 import { AiOutlineCalendar } from 'react-icons/ai';
 
 import { InputCheck } from "./input-check";
-import { EstadoEnum, TarefaInterface } from "@/types/data-types";
+import { CronometroInterface, DataMetaInterface, EstadoEnum, LembreteInterface, TarefaInterface } from "@/types/data-types";
 import { useTarefaContext } from "@/contexts/tarefa-context";
 import { InputAutoComplete } from "./input-auto-complete";
 import { DateTimePicker } from "./datetime-picker";
@@ -25,9 +25,13 @@ export function EditarTarefa(props: Props) {
         subTarefas: _subTarefas,
         projectos,
         buscarTarefaPorId,
+        buscarSubTarefaPorId,
         adicionarSubTarefa,
-        editarSubTarefa,
-        remover
+        editar,
+        editarSubtarefa,
+        remover,
+        removerSubtarefa,
+        promoverSubTarefa
     } = useTarefaContext();
 
     const [tarefa, setTarefa] = useState<TarefaInterface | null>(null);
@@ -56,31 +60,81 @@ export function EditarTarefa(props: Props) {
         handleClose();
     }
 
-    const handleToggleEstadoTarefa = (id: string, estado: EstadoEnum) => {
+    const handleToggleEstadoTarefa = async (id: string, estado: EstadoEnum) => {
+        const foundSubTarefa = await buscarTarefaPorId(id);
 
+        if (foundSubTarefa) {
+            foundSubTarefa.estado = estado
+            editar(id, foundSubTarefa);
+        }
     }
+
+    // TODO handleChangeProjecto
+    const handleChangeProjecto = (projecto: string) => {
+        setTarefa({
+            ...tarefa,
+            titulo: tarefa?.titulo ?? '',
+            projecto
+        });
+    };
+
+    // TODO handleChangeMeta
+    const handleChangeMetas = ({ inicio, conclusao }: DataMetaInterface) => {
+        setTarefa({
+            ...tarefa,
+            titulo: tarefa?.titulo ?? '',
+            dataMeta: { inicio, conclusao }
+        });
+    };
+
+    // TODO handleChangeLembrete
+    const handleChangeLembrete = ({ tipo, valor }: LembreteInterface) => {
+        setTarefa({
+            ...tarefa,
+            titulo: tarefa?.titulo ?? '',
+            lembrete: { tipo, valor }
+        });
+    };
+
+    // TODO handleDeleteCronometro
+    const handleDeleteCronometro = (id: string) => {
+        const cronometro: CronometroInterface[] = [];
+        tarefa?.cronometro?.forEach((item) => {
+            item.id !== id && cronometro.push(item)
+        });
+
+
+        setTarefa({
+            ...tarefa,
+            titulo: tarefa?.titulo ?? '',
+            cronometro
+        });
+    };
 
     const handleChangeNota = ({ target }: ChangeEvent<HTMLTextAreaElement>) => {
         setTarefa({ ...tarefa, titulo: tarefa?.titulo ?? '', notas: target.value });
     };
 
-
     // Handle Subtarefa
-    //TODO Implementar funções
     const handleValueChangeSubtarefa = (id: string, value: string) => {
-        if (id) editarSubTarefa(id, { titulo: value });
+        if (id) editarSubtarefa(id, { titulo: value });
     }
 
-    const handleDeleteSubtarefa = (id: string) => {
-        console.log('handleDeleteSubtarefa', id)
+    const handleDeleteSubtarefa = async (id: string) => {
+        removerSubtarefa(id);
     }
 
-    const handleToggleEstadoSubtarefa = (id: string, estado: EstadoEnum) => {
-        console.log('handleDeleteSubtarefa', id, estado)
+    const handleToggleEstadoSubtarefa = async (id: string, estado: EstadoEnum) => {
+        const foundSubTarefa = await buscarSubTarefaPorId(id);
+
+        if (foundSubTarefa) {
+            foundSubTarefa.estado = estado
+            editarSubtarefa(id, foundSubTarefa);
+        }
     }
 
     const handlePromoverSubTarefa = (id: string) => {
-        console.log('handlePromoverSubTarefa', id)
+        promoverSubTarefa(id);
     }
 
     useEffect(() => {
@@ -93,6 +147,12 @@ export function EditarTarefa(props: Props) {
             document.body.style.overflow = "";
         }
     }, [mostrar]);
+
+    useEffect(() => {
+        if (tarefa)
+            editar(tarefaId, tarefa);
+
+    }, [tarefa]);
 
     return (
         <div

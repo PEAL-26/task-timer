@@ -6,31 +6,45 @@ import { EstadoEnum } from '../types/data-types';
 import { EstadoIcon } from './estado-icon';
 
 interface Props {
-    tarefaId?: string;
+    id?: string;
     descricao?: string;
 }
 
+interface DataTotalProps {
+    inicio?: Date;
+    conclusao?: Date;
+}
+
 export function Temporizador(props: Props) {
-    const { tarefaId, descricao } = props;
+    const { id, descricao } = props;
 
     const {
         tarefas,
+        subTarefas,
         iniciar,
         pausar,
-        adicinarCronometro
+        adicinarCronometro,
+        buscarTarefaPorId,
+        buscarSubTarefaPorId,
     } = useTarefaContext();
 
-    const [tarefa] = tarefas.filter(({ id }) => id === tarefaId);
+    const getTarefa = async () => await buscarTarefaPorId(id ?? '');
+    const getSubTarefa = async () => await buscarSubTarefaPorId(id ?? '');
 
-    const [play, setPlay] = useState(false);
+    const [start, setStart] = useState(false);
+    const [estado, setEstado] = useState<EstadoEnum>(EstadoEnum.PENDENTE);
     const [tempo, setTempo] = useState(0);
     const [dataInicio, setDataInicio] = useState<Date | null>(null);
+    const [dataTotal, setDataTotal] = useState<DataTotalProps | null>(null);
 
-    const handleEstadoToggle = () => {
-        if (tarefa?.estado === EstadoEnum.INICIADA)
-            pausar(tarefaId ?? '');
+    const handleEstadoToggle = async () => {
+        const tarefa = await getTarefa();
+        const subTarefa = await getSubTarefa();
+
+        if (tarefa?.estado === EstadoEnum.INICIADA || subTarefa?.estado === EstadoEnum.INICIADA)
+            id && pausar(id);
         else
-            iniciar(tarefaId ?? '')
+            id && iniciar(id);
     }
 
     const formatTime = (tempo: number) => {
@@ -45,15 +59,22 @@ export function Temporizador(props: Props) {
         return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
     };
 
-    useEffect(() => {
-        if (tarefa?.estado === 'INICIADA')
-            setPlay(true);
-        else
-            setPlay(false);
-    }, [tarefa?.estado]);
+    /**
+     *TODO: Formatar a data
+     *Se for um dia anteroir a data atual, formatar para ontem às 00:00
+     *Se for um dia apos a data actual, formatar para amanhã às 00:00
+     *Caso contrário, formatar com data ano-mes-dia às 00:00
+     */
+
+    // useEffect(() => {
+    //     if (tarefa?.estado === 'INICIADA')
+    //         setStart(true);
+    //     else
+    //         setStart(false);
+    // }, [tarefa?.estado]);
 
     useEffect(() => {
-        if (play) {
+        if (start) {
             setDataInicio(new Date());
             const intervalId = setInterval(() => {
                 setTempo(prevTime => prevTime + 1);
@@ -62,24 +83,24 @@ export function Temporizador(props: Props) {
             return () => clearInterval(intervalId);
         } else {
 
-            if (tarefaId && dataInicio) {
-                adicinarCronometro(tarefaId, { descricao: descricao ?? '', dataInicio, tempo });
+            if (id && dataInicio) {
+                adicinarCronometro(id, { descricao: descricao ?? '', dataInicio, tempo });
                 setTempo(0);
             }
         }
-    }, [play]);
+    }, [start]);
 
     return (
         <div className="flex items-center justify-between w-full">
             <span className='text-xs flex-1'>
-                {play
+                {start
                     ? formatTime(tempo)
-                    : `${tarefa?.dataInicio}-${tarefa?.dataConclusao}`
+                    : `${dataTotal?.inicio ?? '00:00:00'}-${dataTotal?.conclusao ?? '00:00:00'}`
                 }
             </span>
 
-            {tarefa?.estado !== EstadoEnum.CONCLUIDA
-                ? <EstadoIcon play={play} onClick={handleEstadoToggle} />
+            {estado !== EstadoEnum.CONCLUIDA
+                ? <EstadoIcon play={start} onClick={handleEstadoToggle} />
                 : null
             }
         </div>

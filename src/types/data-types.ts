@@ -11,6 +11,7 @@ export enum ImportanciaEnum {
 }
 
 export interface CronometroInterface {
+  id?: string;
   descricao: string;
   dataInicio: Date;
   tempo: number;

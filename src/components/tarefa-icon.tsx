@@ -9,9 +9,10 @@ interface Props {
 
 export function TarefaIcon(props: Props) {
     const { tarefaId } = props;
-    const { tarefas, subTarefas } = useTarefaContext();
+    const { tarefas, subTarefas : _subTarefas } = useTarefaContext();
 
     const [tarefa] = tarefas.filter(({ id }) => id === tarefaId);
+    const subTarefas = _subTarefas.filter(({ tarefaPrincipalId }) => tarefaPrincipalId === tarefaId);
 
     const icon = () => {
         const estado = tarefa.estado;

@@ -93,7 +93,7 @@ export function InputCheck(props: Props) {
                 return <BsCircle className={`cursor-text ${size ?? ''}`} onClick={() => refInput?.current?.focus()} />
         } else {
 
-            if (!state || state === EstadoEnum.INICIADA || state === EstadoEnum.PENDENTE || state === EstadoEnum.PAUSADA)
+            if (!state || state !== EstadoEnum.CONCLUIDA)
                 return <BsCircle className={`cursor-pointer ${size ?? ''}`} onClick={handleOnStateChange} />
 
             return (
@@ -101,7 +101,6 @@ export function InputCheck(props: Props) {
                     <BsFillCheckCircleFill className={`stroke-white fill-green ${size ?? ''}`} />
                 </div>
             );
-
         }
 
     }
@@ -142,7 +141,7 @@ export function InputCheck(props: Props) {
             />
             {isMenu &&
                 <div className='flex items-center gap-2'>
-                    <Temporizador tarefaId={tarefaId} descricao={descricao} />
+                    <Temporizador id={tarefaId} descricao={descricao} />
                     <Tippy visible={visible} onClickOutside={hide}
                         content={
                             <div className="bg-black rounded-sm w-56 flex flex-col">
