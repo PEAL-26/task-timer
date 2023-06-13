@@ -243,6 +243,7 @@ export function EditarTarefa(props: Props) {
                     </div>
 
                     {/* Cronómetro */}
+                    {/* TODO: Cronometro */}
                     <div className="flex flex-col bg-black-light w-full rounded-md px-2 py-3">
                         Cronómetro
                         {tarefa?.cronometro?.map(({ descricao, dataInicio, tempo }) => (
@@ -256,6 +257,14 @@ export function EditarTarefa(props: Props) {
                                 </div>
                             </div>
                         ))}
+
+                        {tarefa?.cronometro && tarefa.cronometro.length > 0 &&
+                            (<>
+                                <hr className="border-gray/30 w-full mb-2" />
+                                <p className="text-xs text-center">
+                                    Tempo total: 0
+                                </p>
+                            </>)}
                     </div>
 
                     {/* Notas */}
@@ -272,6 +281,7 @@ export function EditarTarefa(props: Props) {
 
                 {/* Footer */}
                 <div className="p-4 border-t border-black-light text-center">
+                    {/* TODO: Data de ínicio e data de conclusão */}
                     <p>Estado: Data da criação da tarefa, ou conclusão</p>
                 </div>
             </div>

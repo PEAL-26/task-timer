@@ -1,9 +1,11 @@
 
 import { useEffect, useState } from 'react';
+import Tippy from '@tippyjs/react';
 
 import { useTarefaContext } from "../contexts/tarefa-context";
 import { EstadoEnum } from '../types/data-types';
 import { EstadoIcon } from './estado-icon';
+
 
 interface Props {
     id?: string;
@@ -36,6 +38,7 @@ export function Temporizador(props: Props) {
     const [tempo, setTempo] = useState(0);
     const [dataInicio, setDataInicio] = useState<Date | null>(null);
     const [dataTotal, setDataTotal] = useState<DataTotalProps | null>(null);
+    const [tempoTotal, setTempoTotal] = useState(0);
 
     const handleEstadoToggle = async () => {
         const tarefa = await getTarefa();
@@ -48,6 +51,18 @@ export function Temporizador(props: Props) {
     }
 
     const formatTime = (tempo: number) => {
+        /* TODO Formatar tempo Total do tempo 
+            
+        00:00:00 => ao clicar sobre abrir um popover com o tempo :
+            Mostrar o total em segundos
+            >= 60seg    => Mostrar o total em minutos
+            >= 60min    => Mostrar o total em horas
+            >= 24h      => Mostrar o total em dias
+            >= 7dias    => Mostrar o total em semanas
+            >= 4semanas => Mostrar o total em meses
+            >= 12anos   => Mostrar o total em anos
+        */
+
         const hours = Math.floor(tempo / 3600);
         const minutes = Math.floor((tempo % 3600) / 60);
         const seconds = tempo % 60;
@@ -55,6 +70,7 @@ export function Temporizador(props: Props) {
         const formattedHours = String(hours).padStart(2, '0');
         const formattedMinutes = String(minutes).padStart(2, '0');
         const formattedSeconds = String(seconds).padStart(2, '0');
+
 
         return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
     };
@@ -95,7 +111,12 @@ export function Temporizador(props: Props) {
             <span className='text-xs flex-1'>
                 {start
                     ? formatTime(tempo)
-                    : `${dataTotal?.inicio ?? '00:00:00'}-${dataTotal?.conclusao ?? '00:00:00'}`
+                    : (
+                        <Tippy 
+                        content={<span className='bg-black rounded-sm p-1'>...</span>} >
+                            <span>{formatTime(tempoTotal)}</span>
+                        </Tippy>
+                    )
                 }
             </span>
 
